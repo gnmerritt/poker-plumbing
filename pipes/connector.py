@@ -52,5 +52,7 @@ class PlayGame(object):
         self.server = server
         self.bot = bot
 
-    def connect(self, guid):
-        self.game = protocols.GameContainer(self.server, self.bot)
+    def connect(self, game_key):
+        self.game = protocols.GameContainer(
+            game_key, self.server, self.bot
+        )

@@ -16,8 +16,8 @@ class PokerProtocol(basic.LineReceiver):
     def connectionLost(self, reason):
         print "  lost connection {}".format(reason)
         try:
-            reactor.stop()
             self.bot.kill()
+            reactor.stop()
         except ReactorNotRunning:
             pass
 
@@ -35,8 +35,8 @@ class PokerProtocolFactory(ClientFactory):
 
 
 class GameContainer(object):
-    def __init__(self, server, bot):
-        self.bot = LoadedBot(bot)
+    def __init__(self, game_key, server, bot):
+        self.bot = LoadedBot(game_key, bot)
         factory = PokerProtocolFactory()
         factory.container = self
         reactor.connectTCP(server.host, server.port,

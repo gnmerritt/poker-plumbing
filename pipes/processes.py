@@ -17,13 +17,14 @@ def enqueue_output(out, queue):
 
 
 class LoadedBot(object):
-    def __init__(self, bot):
+    def __init__(self, game, bot):
+        self.game = game
         self.bot = bot
         self.process = BotProcess(bot.runtime)
 
     def login(self):
         print "  logging in..."
-        return "!login {}".format(self.bot.key)
+        return "!login {} {}".format(self.game, self.bot.key)
 
     def tell(self, line):
         try:
