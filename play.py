@@ -1,5 +1,5 @@
 import ConfigParser
-from connector import MatchPlayer
+from pipes.connector import MatchPlayer
 
 
 Config = ConfigParser.ConfigParser()

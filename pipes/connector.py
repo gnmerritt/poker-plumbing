@@ -53,11 +53,4 @@ class PlayGame(object):
         self.bot = bot
 
     def connect(self, guid):
-        self.game = protocols.GameContainer(self.server)
-
-    def handshake(self):
-        pass
-
-    def play(self):
-        """Starts the bot subprocess and plays a game"""
-        pass
+        self.game = protocols.GameContainer(self.server, self.bot)
