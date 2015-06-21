@@ -1,7 +1,8 @@
+import sys
 try:
-    from urllib.request import urlopen
+    from urllib.request import urlopen, URLError
 except ImportError:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, URLError
 
 import json
 import time
@@ -18,7 +19,11 @@ class MatchPlayer(object):
             b=self.bot, s=self.server
         )
         game = FindGame(self.server, self.bot.key)
-        guid = game.get_guid()
+        try:
+            guid = game.get_guid()
+        except URLError:
+            print "Whoops, looks like the server is down. Exiting."
+            sys.exit()
         if guid:
             self.join(guid)
         else:

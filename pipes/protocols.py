@@ -22,6 +22,8 @@ class PokerProtocol(basic.LineReceiver):
             pass
 
     def lineReceived(self, line):
+        if line.startswith("!"):
+            print line
         self.bot.tell(line)
 
 
