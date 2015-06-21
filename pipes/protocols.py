@@ -7,6 +7,10 @@ from processes import LoadedBot
 
 
 class PokerProtocol(basic.LineReceiver):
+    """Client side of the poker protocol.
+    Passes data from the server to the running poker bot, handles
+    login from config options
+    """
     delimiter = "\n"
 
     def connectionMade(self):
