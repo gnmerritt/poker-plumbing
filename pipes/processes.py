@@ -1,26 +1,22 @@
-import sys
-import subprocess as sp
-from threading  import Thread
-
-try:
-    from Queue import Queue, Empty
-except ImportError:
-    from queue import Queue, Empty  # python 3.x
-
-ON_POSIX = 'posix' in sys.builtin_module_names
+from twisted.internet import protocol
+from twisted.python import log
 
 
-def enqueue_output(out, queue):
-    for line in iter(out.readline, b''):
-        queue.put(line)
-    out.close()
-
-
-class LoadedBot(object):
-    def __init__(self, game, bot):
-        self.game = game
+class PokerBotProcess(protocol.ProcessProtocol):
+    def __init__(self, game_key, bot, on_connect):
+        self.game = game_key
         self.bot = bot
-        self.process = BotProcess(bot.runtime)
+        self.on_connect = on_connect
+
+    def connectionMade(self):
+        self.on_connect()
+
+    def outReceived(self, data):
+        print "got line from bot: {}".format(data)
+        self.connection.tell_server(data)
+
+    def errReceived(self, data):
+        print "got bot log line :: {}".format(data)
 
     def login(self):
         print "  logging in..."
@@ -28,55 +24,14 @@ class LoadedBot(object):
 
     def tell(self, line):
         try:
-            self.process.put(line)
-        except IOError as e:
-            print "Error talking to bot process: {}" \
-              .format(e)
-
-    def ask(self):
-        return self.process.get()
+            self.transport.write(line + "\n")
+        except:
+            log.err()
 
     def kill(self):
-        self.process.shutdown()
+        self.transport.signalProcess('KILL')
+        self.transport.loseConnection()
 
-
-class BotProcess(object):
-    def __init__(self, source_file, print_bot_output=True):
-        self.exploded = False
-        self.process = self.process_out = None
-        # TODO: fix this
-        output = sys.stderr if print_bot_output else sp.PIPE
-        try:
-            self.process = p = sp.Popen([source_file],
-                                        stdin=sp.PIPE,
-                                        stdout=sp.PIPE,
-                                        stderr=output,
-                                        bufsize=1,
-                                        close_fds=ON_POSIX)
-            self.process_out = Queue()
-            t = Thread(target=enqueue_output, args=(p.stdout, self.process_out))
-            t.daemon = True # thread dies with the program
-            t.start()
-        except OSError as e:
-            print "bot file doesn't exist, skipping {}".format(repr(e))
-            self.exploded = True
-        # TODO: more error catching probably
-
-    def put(self, line):
-        if self.process:
-            self.process.stdin.write(line)
-            self.process.stdin.write('\n')
-            self.process.stdin.flush()
-
-    def get(self, timeout=1):
-        """Gets the most recent line"""
-        line = None
-        try:
-            line = self.process_out.get(timeout=timeout)
-        except Empty:
-            pass
-        return line
-
-    def shutdown(self):
-        if self.process:
-            self.process.kill()
+    def register(self, connection):
+        print "Connection registered"
+        self.connection = connection
