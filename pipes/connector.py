@@ -20,19 +20,21 @@ class MatchPlayer(object):
         )
         game = FindGame(self.server, self.bot.key)
         try:
-            guid = game.get_guid()
-        except URLError:
+            to_join = game.first_active()
+        except URLError as e:
             print "Whoops, looks like the server is down. Exiting."
+            print "saw {}".format(e)
             sys.exit()
-        if guid:
-            self.join(guid)
+        if to_join:
+            self.join(to_join)
         else:
             print "  no games found, sleeping..."
             time.sleep(10)
 
-    def join(self, guid):
+    def join(self, game):
+        guid = game['guid']
         print "  joining {}".format(guid)
-        player = PlayGame(self.server, self.bot)
+        player = PlayGame(game, self.bot)
         player.connect(guid)
 
 
@@ -42,22 +44,21 @@ class FindGame(object):
             api=server.api, k=key
         )
 
-    def get_guid(self):
+    def first_active(self):
+        print " polling {}".format(self.url)
         response = urlopen(self.url)
         data = str(response.read())
         parsed = json.loads(data)
         if parsed:
-            # try to join the first active game
-            game = parsed['data'][0]
-            return game['guid']
+            return parsed['data'][0]
 
 
 class PlayGame(object):
-    def __init__(self, server, bot):
-        self.server = server
+    def __init__(self, game, bot):
+        self.game = game
         self.bot = bot
 
     def connect(self, game_key):
         self.game = protocols.GameContainer(
-            game_key, self.server, self.bot
+            game_key, self.game, self.bot
         )

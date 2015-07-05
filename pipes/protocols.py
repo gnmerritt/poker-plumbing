@@ -13,14 +13,19 @@ class PokerProtocol(basic.LineReceiver):
     """
     delimiter = "\n"
 
+    def banner(self, line):
+        print "*" * 40
+        print line
+        print "*" * 40
+
     def connectionMade(self):
-        print "  made connection to game server"
+        self.banner("made connection to game server")
         self.process = self.factory.bot
         self.process.register(self)
         self.sendLine(self.process.login())
 
     def connectionLost(self, reason):
-        print "  lost connection {}".format(reason)
+        self.banner("lost connection {}".format(reason))
         try:
             self.process.kill()
             reactor.stop()
@@ -30,11 +35,11 @@ class PokerProtocol(basic.LineReceiver):
     def lineReceived(self, line):
         if line.startswith("!"):
             print line
-        print "received line from server: {}".format(line)
+        print "<<< {}".format(line)
         self.process.tell(line)
 
     def tell_server(self, line):
-        print "sending line to server".format(line)
+        print ">>> {}".format(line)
         self.sendLine(line)
 
 
@@ -47,11 +52,10 @@ class GameContainer(object):
         factory = PokerProtocolFactory()
 
         def on_connect():
-            reactor.connectTCP(server.host, server.port,
+            reactor.connectTCP(server['host'], server['port'],
                                factory)
 
         self.bot = PokerBotProcess(game_key, bot, on_connect)
         factory.bot = self.bot
-        reactor.spawnProcess(self.bot, bot.runtime, [bot.runtime])
-
+        reactor.spawnProcess(self.bot, bot.runtime[0], bot.runtime)
         reactor.run()

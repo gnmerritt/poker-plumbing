@@ -11,18 +11,15 @@ def get(param):
 class Server(object):
     def __init__(self):
         self.api = get('api')
-        self.host = get('host')
-        self.port = int(get('port'))
 
     def __repr__(self):
-        return "Server<{} @ {}:{}>".format(
-            self.api, self.host, self.port)
+        return "Server<{}>".format(self.api)
 
 
 class Bot(object):
     def __init__(self):
         self.key = get('key')
-        self.runtime = get('runtime')
+        self.runtime = get('runtime').split(" ")
 
     def __repr__(self):
         return "Bot<{} || {}>".format(
