@@ -49,7 +49,7 @@ class FindGame(object):
         response = urlopen(self.url)
         data = str(response.read())
         parsed = json.loads(data)
-        if parsed:
+        if parsed and parsed['data']:
             return parsed['data'][0]
 
 
