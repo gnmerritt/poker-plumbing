@@ -1,6 +1,10 @@
+import argparse
 import ConfigParser
 from pipes.connector import MatchPlayer
 
+parser = argparse.ArgumentParser(description="connect to a casino")
+parser.add_argument('--key', help="secret key for your bot")
+parser.add_argument("--runtime", help="path to your bot's runtime")
 
 Config = ConfigParser.ConfigParser()
 Config.read('config.ini')
@@ -17,22 +21,32 @@ class Server(object):
 
 
 class Bot(object):
-    def __init__(self):
-        self.key = get('key')
-        self.runtime = get('runtime').split(" ")
+    def __init__(self, args):
+        if args.key:
+            self.key = args.key
+        else:
+            self.key = get('key')
+        if args.runtime:
+            self.runtime = args.runtime
+        else:
+            self.runtime = get('runtime')
+        self.runtime = self.runtime.split(" ")
 
     def __repr__(self):
         return "Bot<{} || {}>".format(
             self.key, self.runtime)
 
 
-def main():
+def main(args):
     server = Server()
-    bot = Bot()
+    bot = Bot(args)
 
     player = MatchPlayer(server, bot)
     player.play()
 
 
 if __name__ == "__main__":
-    main()
+    args = parser.parse_args()
+    print "got key= {}".format(args.key)
+    print "got runtime ={}]".format(args.runtime)
+    main(args)
