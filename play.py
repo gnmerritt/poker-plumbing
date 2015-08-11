@@ -5,6 +5,7 @@ from pipes.connector import MatchPlayer
 parser = argparse.ArgumentParser(description="connect to a casino")
 parser.add_argument('--key', help="secret key for your bot")
 parser.add_argument("--runtime", help="path to your bot's runtime")
+parser.add_argument("--games", help="number of games to play before quitting")
 
 Config = ConfigParser.ConfigParser()
 Config.read('config.ini')
@@ -42,7 +43,12 @@ def main(args):
     bot = Bot(args)
 
     player = MatchPlayer(server, bot)
-    player.play()
+    if args.games:
+        for i in xrange(args.games):
+            player.play
+    else:
+        while True:
+            player.play()
 
 
 if __name__ == "__main__":
