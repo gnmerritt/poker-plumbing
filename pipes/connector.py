@@ -3,9 +3,10 @@ try:
     from urllib.request import urlopen, URLError
 except ImportError:
     from urllib2 import urlopen, URLError
-
 import json
-import time
+
+from twisted.internet import reactor
+
 import protocols
 
 
@@ -14,10 +15,8 @@ class MatchPlayer(object):
         self.server = server
         self.bot = bot
 
-    def play(self):
-        print "Finding a game for {b} on {s}".format(
-            b=self.bot, s=self.server
-        )
+    def play(self, on_after_match):
+        print "Finding a game for {b} on {s}".format(b=self.bot, s=self.server)
         game = FindGame(self.server, self.bot.key)
         try:
             to_join = game.first_active()
@@ -26,23 +25,20 @@ class MatchPlayer(object):
             print "saw {}".format(e)
             sys.exit()
         if to_join:
-            self.join(to_join)
+            self.join(to_join, on_after_match)
         else:
             print "  no games found, sleeping..."
-            time.sleep(10)
+            reactor.callLater(10, on_after_match)
 
-    def join(self, game):
+    def join(self, game, on_after_match):
         guid = game['guid']
         print "  joining {}".format(guid)
-        player = PlayGame(game, self.bot)
-        player.connect(guid)
+        protocols.GameContainer(guid, game, self.bot, on_after_match)
 
 
 class FindGame(object):
     def __init__(self, server, key):
-        self.url = '{api}/api/matches?key={k}'.format(
-            api=server.api, k=key
-        )
+        self.url = '{api}/api/matches?key={k}'.format(api=server.api, k=key)
 
     def first_active(self):
         print " polling {}".format(self.url)
@@ -51,14 +47,3 @@ class FindGame(object):
         parsed = json.loads(data)
         if parsed and parsed['data']:
             return parsed['data'][0]
-
-
-class PlayGame(object):
-    def __init__(self, game, bot):
-        self.game = game
-        self.bot = bot
-
-    def connect(self, game_key):
-        self.game = protocols.GameContainer(
-            game_key, self.game, self.bot
-        )

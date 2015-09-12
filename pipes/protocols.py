@@ -28,7 +28,7 @@ class PokerProtocol(basic.LineReceiver):
         self.banner("lost connection {}".format(reason))
         try:
             self.process.kill()
-            reactor.stop()
+            reactor.callLater(1, self.factory.on_finish)
         except ReactorNotRunning:
             pass
 
@@ -46,16 +46,18 @@ class PokerProtocol(basic.LineReceiver):
 class PokerProtocolFactory(ClientFactory):
     protocol = PokerProtocol
 
+    def __init__(self, on_finish):
+        self.on_finish = on_finish
+
 
 class GameContainer(object):
-    def __init__(self, game_key, server, bot):
-        factory = PokerProtocolFactory()
-
-        def on_connect():
-            reactor.connectTCP(server['host'], server['port'],
-                               factory)
-
-        self.bot = PokerBotProcess(game_key, bot, on_connect)
-        factory.bot = self.bot
+    def __init__(self, game_key, server, bot, on_finish):
+        self.server = server
+        self.factory = PokerProtocolFactory(on_finish)
+        self.bot = PokerBotProcess(game_key, bot, self.on_connect)
+        self.factory.bot = self.bot
         reactor.spawnProcess(self.bot, bot.runtime[0], bot.runtime)
-        reactor.run()
+
+    def on_connect(self):
+        server = self.server
+        reactor.connectTCP(server['host'], server['port'], self.factory)
