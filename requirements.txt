@@ -1,2 +1,4 @@
 twisted
 requests
+nose
+coverage
