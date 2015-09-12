@@ -1,6 +1,9 @@
 # poker-plumbing
 pipes and wires to get your poker bot talking to the world
 
+[![Build Status](https://travis-ci.org/gnmerritt/poker-plumbing.svg?branch=master)](https://travis-ci.org/gnmerritt/poker-plumbing) [![codecov.io](http://codecov.io/github/gnmerritt/poker-plumbing/coverage.svg?branch=master)](http://codecov.io/github/gnmerritt/poker-plumbing?branch=master)
+
+
 Setup
 =====
 
