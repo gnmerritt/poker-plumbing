@@ -31,7 +31,7 @@ class LoggerTest(unittest.TestCase):
         logger = GameLogger(self.bot, self.game, self.dir)
         logger.sent("SENT LINE")
         logger.received("RECEIVED LINE")
-        logger.sent("SENT ANOTHER")
+        logger.debug("SENT ANOTHER")
         logger.done()
 
         with open(logger.filename, "r") as logfile:
@@ -40,3 +40,4 @@ class LoggerTest(unittest.TestCase):
             self.assertIn("SENT LINE", data[0])
             self.assertIn("RECEIVED LINE", data[1])
             self.assertIn("SENT ANOTHER", data[2])
+            self.assertIn("DEBUG", data[2])
