@@ -1,5 +1,5 @@
 import argparse
-import sys
+import requests
 
 from twisted.internet import reactor
 import ConfigParser
@@ -29,7 +29,8 @@ class Server(object):
 
 
 class Bot(object):
-    def __init__(self, args):
+    def __init__(self, server, args):
+        self.server = server
         if args.key:
             self.key = args.key
         else:
@@ -39,6 +40,13 @@ class Bot(object):
         else:
             self.runtime = get('runtime')
         self.runtime = self.runtime.split(" ")
+        self.get_info()
+
+    def get_info(self):
+        r = requests.get("{}/api/bot/{}".format(self.server.api, self.key))
+        bot_json = r.json()
+        if bot_json and bot_json.get('bot'):
+            self.info = bot_json.get('bot')
 
     def __repr__(self):
         return "Bot<{} || {}>".format(
@@ -62,13 +70,26 @@ class GameCounter(object):
             self.player.play(self.play_or_quit)
 
 
+def print_banner(bot_info):
+    print "\n\nLogin succeeded. You are playing as:"
+    print "  '{n}' (key={k}) ".format(
+        n=bot_info.get('name'), k=bot_info.get('key'))
+    print "  Current ranked #{r} with a skill of {s}".format(
+        r=bot_info.get('rank'), s=bot_info.get('skill'))
+    print "\n"
+
+
 def main(args):
     server = Server()
-    bot = Bot(args)
-    player = MatchPlayer(server, bot)
-    counter = GameCounter(player, args)
-    reactor.callLater(0.5, counter.play_or_quit)
-    reactor.run()
+    bot = Bot(server, args)
+    if bot.info:
+        print_banner(bot.info)
+        player = MatchPlayer(server, bot)
+        counter = GameCounter(player, args)
+        reactor.callLater(0.5, counter.play_or_quit)
+        reactor.run()
+    else:
+        print "Couldn't find your bot - please check the key and try again"
 
 
 if __name__ == "__main__":
