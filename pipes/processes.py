@@ -3,20 +3,21 @@ from twisted.python import log
 
 
 class PokerBotProcess(protocol.ProcessProtocol):
-    def __init__(self, game_key, bot, on_connect):
+    def __init__(self, game_key, bot, on_connect, logger):
         self.game = game_key
         self.bot = bot
         self.on_connect = on_connect
+        self.logger = logger
 
     def connectionMade(self):
         self.on_connect()
 
     def outReceived(self, data):
-        print "got line from bot: {}".format(data)
         self.connection.tell_server(data)
 
     def errReceived(self, data):
-        print "got bot log line :: {}".format(data)
+        for line in data.split("\n"):
+            self.logger.debug(line)
 
     def login(self):
         print "  logging in..."
@@ -31,6 +32,7 @@ class PokerBotProcess(protocol.ProcessProtocol):
     def kill(self):
         self.transport.signalProcess('KILL')
         self.transport.loseConnection()
+        self.logger.done()
 
     def register(self, connection):
         print "Connection registered"

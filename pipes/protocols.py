@@ -33,13 +33,11 @@ class PokerProtocol(basic.LineReceiver):
             pass
 
     def lineReceived(self, line):
-        if line.startswith("!"):
-            print line
-        print "<<< {}".format(line)
+        self.factory.logger.received(line)
         self.process.tell(line)
 
     def tell_server(self, line):
-        print ">>> {}".format(line)
+        self.factory.logger.sent(line)
         self.sendLine(line)
 
 
@@ -51,10 +49,11 @@ class PokerProtocolFactory(ClientFactory):
 
 
 class GameContainer(object):
-    def __init__(self, game_key, server, bot, on_finish):
+    def __init__(self, game_key, server, bot, on_finish, logger):
         self.server = server
         self.factory = PokerProtocolFactory(on_finish)
-        self.bot = PokerBotProcess(game_key, bot, self.on_connect)
+        self.factory.logger = logger
+        self.bot = PokerBotProcess(game_key, bot, self.on_connect, logger)
         self.factory.bot = self.bot
         reactor.spawnProcess(self.bot, bot.runtime[0], bot.runtime)
 

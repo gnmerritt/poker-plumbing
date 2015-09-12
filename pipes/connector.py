@@ -8,9 +8,13 @@ import json
 from twisted.internet import reactor
 
 import protocols
+from logger import GameLogger
 
 
 class MatchPlayer(object):
+    """
+    Handles joining and playing games for a specified bot
+    """
     def __init__(self, server, bot):
         self.server = server
         self.bot = bot
@@ -25,18 +29,23 @@ class MatchPlayer(object):
             print "saw {}".format(e)
             sys.exit()
         if to_join:
-            self.join(to_join, on_after_match)
+            logger = GameLogger(self.bot.info.get('guid'),
+                                to_join['guid'], self.bot.log_dir)
+            self.join(to_join, logger, on_after_match)
         else:
             print "  no games found, sleeping..."
             reactor.callLater(10, on_after_match)
 
-    def join(self, game, on_after_match):
+    def join(self, game, logger, on_after_match):
         guid = game['guid']
         print "  joining {}".format(guid)
-        protocols.GameContainer(guid, game, self.bot, on_after_match)
+        protocols.GameContainer(guid, game, self.bot, on_after_match, logger)
 
 
 class FindGame(object):
+    """
+    Polls the API and provides a dictionary representing the first active game
+    """
     def __init__(self, server, key):
         self.url = '{api}/api/matches?key={k}'.format(api=server.api, k=key)
 

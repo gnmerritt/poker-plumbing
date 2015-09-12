@@ -40,6 +40,7 @@ class Bot(object):
         else:
             self.runtime = get('runtime')
         self.runtime = self.runtime.split(" ")
+        self.log_dir = get('log_dir')
         self.get_info()
 
     def get_info(self):
@@ -74,7 +75,7 @@ def print_banner(bot_info):
     print "\n\nLogin succeeded. You are playing as:"
     print "  '{n}' (key={k}) ".format(
         n=bot_info.get('name'), k=bot_info.get('key'))
-    print "  Current ranked #{r} with a skill of {s}".format(
+    print "  Currently ranked #{r} with a skill of {s}".format(
         r=bot_info.get('rank'), s=bot_info.get('skill'))
     print "\n"
 
@@ -94,6 +95,4 @@ def main(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    print "got key= {}".format(args.key)
-    print "got runtime ={}]".format(args.runtime)
     main(args)
