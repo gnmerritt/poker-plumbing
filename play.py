@@ -2,7 +2,10 @@ import argparse
 import requests
 
 from twisted.internet import reactor
-import configparser
+try:
+    import ConfigParser as configparser
+except ImportError:
+    import configparser
 
 from pipes.connector import MatchPlayer
 
