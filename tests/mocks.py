@@ -9,6 +9,11 @@ class MockLogger(object):
     def sent(self, line):
         self.last_sent = line
 
+    def debug(self, line):
+        self.last_debug = line
+
+    def done(self):
+        self.finished = True
 
 class MockFactory(object):
     def __init__(self):
@@ -28,9 +33,22 @@ class MockProcess(object):
 
 
 class MockBot(object):
+    key = "bot_key"
+
     def register(self, protocol):
         self.registered = True
 
     def login(self):
         self.logged_in = True
         return "login"
+
+
+class MockTransport(object):
+    def signalProcess(self, signal):
+        self.signal = signal
+
+    def loseConnection(self):
+        self.lost_connection = True
+
+    def write(self, line):
+        self.last_line = line
