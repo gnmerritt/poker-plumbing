@@ -13,7 +13,7 @@ class FindGameTest(unittest.TestCase):
         self.finder = FindGame(MockServer, "myKey")
 
     def test_url(self):
-        self.assertEquals(self.finder.url, "apiUrl/api/matches?key=myKey")
+        self.assertEqual(self.finder.url, "apiUrl/api/matches?key=myKey")
 
     def fake_urlopen(self, url):
         def fake():
@@ -27,7 +27,7 @@ class FindGameTest(unittest.TestCase):
     def test_first_active(self):
         self.finder.urlopen = self.fake_urlopen
         found = self.finder.first_active()
-        self.assertEquals(7, found)
+        self.assertEqual(7, found)
 
     def exploding_urlopen(self, url):
         raise URLError("BOOM")

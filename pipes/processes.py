@@ -20,7 +20,7 @@ class PokerBotProcess(protocol.ProcessProtocol):
             self.logger.debug(line)
 
     def login(self):
-        print "  logging in..."
+        print("  logging in...")
         return "!login {} {}".format(self.game, self.bot.key)
 
     def tell(self, line):
@@ -35,5 +35,5 @@ class PokerBotProcess(protocol.ProcessProtocol):
         self.logger.done()
 
     def register(self, connection):
-        print "Connection registered"
+        print("Connection registered")
         self.connection = connection

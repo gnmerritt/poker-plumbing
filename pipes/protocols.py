@@ -3,7 +3,7 @@ from twisted.protocols import basic
 from twisted.internet.error import ReactorNotRunning
 from twisted.internet.protocol import ClientFactory
 
-from processes import PokerBotProcess
+from .processes import PokerBotProcess
 
 
 class PokerProtocol(basic.LineReceiver):
@@ -14,9 +14,9 @@ class PokerProtocol(basic.LineReceiver):
     delimiter = "\n"
 
     def banner(self, line):
-        print "*" * 40
-        print line
-        print "*" * 40
+        print("*" * 40)
+        print(line)
+        print("*" * 40)
 
     def connectionMade(self):
         self.banner("made connection to game server")

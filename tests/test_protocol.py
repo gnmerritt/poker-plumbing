@@ -17,7 +17,7 @@ class PokerProtocolTest(unittest.TestCase):
         self.protocol.connectionMade()
         self.assertTrue(self.protocol.factory.bot.logged_in)
         self.assertTrue(self.protocol.factory.bot.registered)
-        self.assertEquals(self.last_line, "login")
+        self.assertEqual(self.last_line, "login")
 
     def test_connection_lost(self):
         self.protocol.connectionLost("explode")
@@ -26,11 +26,11 @@ class PokerProtocolTest(unittest.TestCase):
     def test_line_received(self):
         p = self.protocol
         p.lineReceived("a line")
-        self.assertEquals("a line", p.process.last_told)
-        self.assertEquals("a line", p.factory.logger.last_received)
+        self.assertEqual("a line", p.process.last_told)
+        self.assertEqual("a line", p.factory.logger.last_received)
 
     def test_tell_server(self):
         p = self.protocol
         p.tell_server("hello")
-        self.assertEquals("hello", self.last_line)
-        self.assertEquals("hello", p.factory.logger.last_sent)
+        self.assertEqual("hello", self.last_line)
+        self.assertEqual("hello", p.factory.logger.last_sent)

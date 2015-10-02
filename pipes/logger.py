@@ -10,7 +10,7 @@ class GameLogger(object):
         output = "{n}__{g}.log".format(n=bot_key, g=game_key)
         self.filename = os.path.join(log_dir, output)
         self.outf = open(self.filename, 'w')
-        print "Writing game logs to '{}'".format(self.filename)
+        print("Writing game logs to '{}'".format(self.filename))
 
     def done(self):
         self.outf.close()

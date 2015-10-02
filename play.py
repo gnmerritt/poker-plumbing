@@ -2,7 +2,7 @@ import argparse
 import requests
 
 from twisted.internet import reactor
-import ConfigParser
+import configparser
 
 from pipes.connector import MatchPlayer
 
@@ -12,7 +12,7 @@ parser.add_argument("--runtime", help="path to your bot's runtime")
 parser.add_argument("--games", help="number of games to play before quitting",
                     type=int)
 
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 Config.read('config.ini')
 
 
@@ -65,19 +65,19 @@ class GameCounter(object):
             reactor.stop()
         else:
             self.played += 1
-            print "Playing game #{} of {}".format(
+            print("Playing game #{} of {}".format(
                 self.played, self.games_wanted
-            )
+            ))
             self.player.play(self.play_or_quit)
 
 
 def print_banner(bot_info):
-    print "\n\nLogin succeeded. You are playing as:"
-    print "  '{n}' (key={k}) ".format(
-        n=bot_info.get('name'), k=bot_info.get('key'))
-    print "  Currently ranked #{r} with a skill of {s}".format(
-        r=bot_info.get('rank'), s=bot_info.get('skill'))
-    print "\n"
+    print("\n\nLogin succeeded. You are playing as:")
+    print("  '{n}' (key={k}) ".format(
+        n=bot_info.get('name'), k=bot_info.get('key')))
+    print("  Currently ranked #{r} with a skill of {s}".format(
+        r=bot_info.get('rank'), s=bot_info.get('skill')))
+    print("\n")
 
 
 def main(args):
@@ -90,7 +90,7 @@ def main(args):
         reactor.callLater(0.5, counter.play_or_quit)
         reactor.run()
     else:
-        print "Couldn't find your bot - please check the key and try again"
+        print("Couldn't find your bot - please check the key and try again")
 
 
 if __name__ == "__main__":

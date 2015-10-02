@@ -6,8 +6,8 @@ import json
 
 from twisted.internet import reactor
 
-import protocols
-from logger import GameLogger
+from . import protocols
+from .logger import GameLogger
 
 
 class MatchPlayer(object):
@@ -19,7 +19,7 @@ class MatchPlayer(object):
         self.bot = bot
 
     def play(self, on_after_match):
-        print "Finding a game for {b} on {s}".format(b=self.bot, s=self.server)
+        print("Finding a game for {b} on {s}".format(b=self.bot, s=self.server))
         game = FindGame(self.server, self.bot.key)
         to_join = game.first_active()
         if to_join:
@@ -27,12 +27,12 @@ class MatchPlayer(object):
                                 to_join['guid'], self.bot.log_dir)
             self.join(to_join, logger, on_after_match)
         else:
-            print "  no games found, sleeping..."
+            print("  no games found, sleeping...")
             reactor.callLater(10, on_after_match)
 
     def join(self, game, logger, on_after_match):
         guid = game['guid']
-        print "  joining {}".format(guid)
+        print("  joining {}".format(guid))
         protocols.GameContainer(guid, game, self.bot, on_after_match, logger)
 
 
@@ -45,7 +45,7 @@ class FindGame(object):
         self.urlopen = urlopen
 
     def first_active(self):
-        print " polling {}".format(self.url)
+        print(" polling {}".format(self.url))
         try:
             response = self.urlopen(self.url)
             data = str(response.read())

@@ -24,15 +24,15 @@ class BotProcessTest(unittest.TestCase):
 
     def test_err_received(self):
         self.bot.errReceived("bang")
-        self.assertEquals(self.logger.last_debug, "bang")
+        self.assertEqual(self.logger.last_debug, "bang")
 
     def test_login(self):
         login_str = self.bot.login()
-        self.assertEquals(login_str, "!login game_key bot_key")
+        self.assertEqual(login_str, "!login game_key bot_key")
 
     def test_register(self):
         self.bot.register("foo")
-        self.assertEquals(self.bot.connection, "foo")
+        self.assertEqual(self.bot.connection, "foo")
 
     def test_kill(self):
         b = self.bot
