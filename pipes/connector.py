@@ -1,4 +1,3 @@
-import sys
 try:
     from urllib.request import urlopen, URLError
 except ImportError:
@@ -22,12 +21,7 @@ class MatchPlayer(object):
     def play(self, on_after_match):
         print "Finding a game for {b} on {s}".format(b=self.bot, s=self.server)
         game = FindGame(self.server, self.bot.key)
-        try:
-            to_join = game.first_active()
-        except URLError as e:
-            print "Whoops, looks like the server is down. Exiting."
-            print "saw {}".format(e)
-            sys.exit()
+        to_join = game.first_active()
         if to_join:
             logger = GameLogger(self.bot.info.get('guid'),
                                 to_join['guid'], self.bot.log_dir)
@@ -48,11 +42,15 @@ class FindGame(object):
     """
     def __init__(self, server, key):
         self.url = '{api}/api/matches?key={k}'.format(api=server.api, k=key)
+        self.urlopen = urlopen
 
     def first_active(self):
         print " polling {}".format(self.url)
-        response = urlopen(self.url)
-        data = str(response.read())
-        parsed = json.loads(data)
-        if parsed and parsed['data']:
-            return parsed['data'][0]
+        try:
+            response = self.urlopen(self.url)
+            data = str(response.read())
+            parsed = json.loads(data)
+            if parsed and parsed['data']:
+                return parsed['data'][0]
+        except URLError:
+            return None

@@ -1,3 +1,7 @@
+class MockServer(object):
+    api = "apiUrl"
+
+
 class MockLogger(object):
     def received(self, line):
         self.last_received = line
