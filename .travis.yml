@@ -1,11 +1,14 @@
 language: python
 python:
-  - "2.7"
-  - "3.5"
+- '2.7'
+- '3.5'
 before_install:
-  - "pip install codecov"
+- pip install codecov
 install:
-  - "pip install -r requirements.txt"
+- pip install -r requirements.txt
 script: nosetests --with-coverage --cover-inclusive --cover-package=pipes
 after_success:
-  - "codecov"
+- codecov
+notifications:
+  slack:
+    secure: No5BXea+cs/SICE2/Lc7fuC18QwvO1PDG/XVb5rdQ8C8VTLrY/d2uv7WZ+gy6CXVNw4/jPARUSI9kmY8TcC6o1HMZmv627uIBWpNsyqPrxL02Hy7V3afdPUwy+0zZ/Vk0+U+rqXUlXSZ+FY9wCdzjrF1MGRul8TOV1wFEGDIsMtpX4orttHhzwMjwQEH/aS1inYwavctjtibpL9Fv9MMQadVVsGXkJ6vS3HoEDMUIogvfhr2RbPf0nSluKyuhfyMHweGNyezUVq0m6SLC5N1vIBwMBFYEmjs6SV69yGqUbY3QV1uQf+ytZ0d5OAqiUVGoESmKuI9ajJoY9FIJKGVAHsYsTZ3g2/exJrBdPCPHcX+7M/C9o2JkYVhE+UtjLywKSetwrH7X93pmOT5nXAh5nrni3tY3RAAnMy8DjqyXiO4rz8f06hhtRGKkCYBno1kp4UXMul0buz8f+/X/n93P6ChKPtgHXoc1Ga9nKtpi7BQCWAA2JdFOBvwLp+5zgip4X7Um7+dCJMWfsGjVq5m8dkftO24DwM54fof9Y/CoMK5RqkN4PfDzE+n+1kQlxQVB5qi4MqtMi8+Wa52Zky1jQRciJwBWCB3weqXTqCRSu6gJ4M1xNxZk6jfJM2h6MwhrmFt49/3Mb5PoMFfpFF/+FliNE8Q6q32YumeQolW8fU=

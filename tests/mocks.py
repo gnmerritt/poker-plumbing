@@ -15,6 +15,7 @@ class MockLogger(object):
     def done(self):
         self.finished = True
 
+
 class MockFactory(object):
     def __init__(self):
         self.bot = MockBot()
